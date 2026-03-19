@@ -1,10 +1,37 @@
 import numpy as np
 import pandas as pd
+import argparse
+import sys
+import os
+
+# 1. Parse arguments
+parser = argparse.ArgumentParser(description="GWAS Simulator")
+parser.add_argument("--n_individuals", type=int, default=1000, help="Total number of individuals")
+parser.add_argument("--n_snps", type=int, default=5000, help="Total number of SNPs")
+args = parser.parse_args()
+
+n_individuals = args.n_individuals
+n_snps = args.n_snps
 
 # 1. Define dimensions
-n_individuals = 1000
-n_snps = 5000  # Start small for CSV; real GWAS would be 1M+
+#n_individuals = 1000
+#n_snps = 5000  # Start small for CSV; real GWAS would be 1M+
 
+if n_snps <= 1200:
+    if rank == 0:
+        print(f"Error: n_snps ({n_snps}) must be greater than 1200 for the hidden interaction logic to work.")
+    sys.exit(1)
+
+# Make sure the files does not exist, otherwise stop immediatelly
+if os.path.exists("genotypes.csv"):
+    print(f"Error: the file genotypes.csv already exist.")
+    sys.exit(1)
+
+# Make sure the files does not exist, otherwise stop immediatelly
+if os.path.exists("phenotypes.csv"):
+    print(f"Error: the file phenotypes.csv already exist.")
+    sys.exit(1)
+    
 # 2. Generate Genotypes: 0 (Ref/Ref), 1 (Het), 2 (Alt/Alt)
 # Using a realistic Allele Frequency (e.g., 20% for the risk allele)
 genotypes = np.random.choice([0, 1, 2], size=(n_individuals, n_snps), p=[0.64, 0.32, 0.04])
